@@ -112,13 +112,14 @@ export const useRateMutation = (addNotification: (notification: NotificationPara
     onMutate: async rateParams => {
       await queryClient.cancelQueries({ queryKey: ['Rate'] })
       const previousRates = queryClient.getQueryData<Rate[]>(['Rate'])
+      const newRateId = new Date().getTime()
 
       if (previousRates) {
-        const newRatesArr = [...previousRates, { Id: new Date().getTime(), ...rateParams }]
+        const newRatesArr = [...previousRates, { Id: newRateId, ...rateParams }]
         queryClient.setQueryData(['Rate'], newRatesArr)
       }
 
-      return { previousRates }
+      return { previousRates, newRateId }
     },
     onError: (error, variables, context) => {
       if (context?.previousRates) {
@@ -126,7 +127,7 @@ export const useRateMutation = (addNotification: (notification: NotificationPara
       }
       addNotification({ message: 'Помилка при оновленні!', severity: 'error' })
     },
-    onSettled: async data => {
+    onSettled: async (data, error, variables, context) => {
       if (!data) return
 
       try {
@@ -143,7 +144,8 @@ export const useRateMutation = (addNotification: (notification: NotificationPara
 
         queryClient.setQueryData(['Rate'], (old: Rate[]) => {
           return old.map(rate => {
-            if (rate.SchoolboyId === data.SchoolboyId && rate.ColumnId === data.ColumnId) {
+            if (rate.Id === context?.newRateId) {
+              //if (rate.SchoolboyId === data.SchoolboyId && rate.ColumnId === data.ColumnId) {
               return currentRate
             }
             return rate

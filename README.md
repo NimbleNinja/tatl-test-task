@@ -1,46 +1,48 @@
-# Getting Started with Create React App
+# ESCHOOL
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Технології
 
-## Available Scripts
+```
+- React (create-react-app)
+- TypeScript
+- @tanstack/react-query
+- Axios
+```
 
-In the project directory, you can run:
+### Запуск проекту
 
-### `npm start`
+```
+- npm install
+- npm start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Коментарі до завдання
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### 1. Не працює пагінація в роуті /Schoolboy
 
-### `npm test`
+Сам роут працює, але пагінація ні. Наприклад запит `?page=1&limit=15` повертає всі елементи. В даному випадку зробив і протестував пагінацію з `mockStudents` та функцією `getMockStudents` яка ці дані отримує. Якщо виправити пагінацію на сервері то все запрацює :smile:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 2. Функціонал виставлення/видалення відсутності учня при кліку на відповідні комірки
 
-### `npm run build`
+#### Під час аналізу задачі виявив наступні моменти:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- видалення відсутностей `POST/UnRate` нічого не повертає окрім `status 200`
+- створення нових `POST/Rate` нічого не повертає окрім `status 200`
+- можна отримати всі `GET/Rate` одного учня по `Id (?SchoolboyId={int})`, але не можна отримати всі записи декількох учнів одночасно
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### Виходячи з цього вибрав наступну стратегію:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- При першому завантаженні отримувати всі `GET/Rate`.
+- Після видалення відсутності `/UnRate` робити оптимістичне оновлення і після цього запит `GET/Rate?SchoolboyId={int}`для перевірки остаточного видалення елементу і оновлювати кеш локально.
+- При створенні нової відсутності `POST/Rate` також відбувається оптимістичне оновлення, в елемент якого підставляється тимчасовий `Id`. По аналогії з видаленням відсутності робиться запит `GET/Rate?SchoolboyId={int}` для перевірки створення та оновлення елементу в кеші.
 
-### `npm run eject`
+### 3. Estimate
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+Враховуючи оцінку задачі, пошук інформації, ознайомлення з @tanstack/react-query, рефакторинг та написання коду і цього листа :smile: витратив сумарно до 20 годин :hourglass:.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 4. Підсумок
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Не дивлячись на незначні деталі в роботі роутів хочу подякувати за цікаве завдання :+1:. Особливо хочу виділити @tanstack/react-query, який надихнув мене переглянути свої стратегії виконання запитів в додатках :fire:.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+Чекаю на Ваш фідбек.
+З найкращими побажаннями Олег Запорожець 🤝.

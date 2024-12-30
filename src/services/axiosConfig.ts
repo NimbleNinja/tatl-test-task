@@ -13,10 +13,3 @@ export const instance = axios.create({
     'Content-Type': 'application/json'
   }
 })
-
-instance.interceptors.request.use(async request => {
-  await new Promise(res => {
-    setTimeout(() => res(true), 3000)
-  })
-  return request
-})

@@ -54,8 +54,6 @@ function StudentsRates() {
     unRateMutation.isPending ||
     rateMutation.isPending
 
-  console.log(' columnsQuery.status: ', columnsQuery.status)
-
   return columnsQuery.error || studentsQuery.error || ratesQuery.error ? (
     <Box display="flex" flexDirection="column" alignItems="center" rowGap={4}>
       <Typography variant="h4">При завантаженні даних сталася помилка</Typography>
